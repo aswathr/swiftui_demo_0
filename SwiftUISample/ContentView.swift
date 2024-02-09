@@ -7,18 +7,59 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ContentView1: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Text("CV1")
+            .fixedSize()
+    }
+}
+
+struct ContentView2: View {
+    var body: some View {
+        Text("CV2")
+            .fixedSize()
+    }
+}
+
+struct MainView: View {
+    var body: some View {
+        ScrollViewReader { svProxy in
+            VStack {
+                GeometryReader { geoProxy in
+                    ScrollView(.horizontal) {
+                        HStack {
+                            ContentView1()
+                                .frame(width: geoProxy.size.width, height: geoProxy.size.height)
+                                .id(1)
+                            ContentView2()
+                                .frame(width: geoProxy.size.width, height: geoProxy.size.height)
+                                .id(2)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    
+                    .frame(maxWidth: .infinity)
+                    
+                }
+                
+                HStack {
+                    Button("CV1 btn") {
+                        withAnimation {
+                            svProxy.scrollTo(1)
+                        }
+                    }
+
+                    Button("CV2 btn") {
+                        withAnimation {
+                            svProxy.scrollTo(2)
+                        }
+                    }
+                }
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    MainView()
 }
