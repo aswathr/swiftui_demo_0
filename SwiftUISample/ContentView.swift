@@ -23,6 +23,8 @@ struct MainView: View {
     
     @Namespace var namespace
     @State var currentPage: Int = 0
+    
+    var notchUnitSize: CGFloat = 30
     var body: some View {
         ScrollViewReader { svProxy in
             VStack {
@@ -45,8 +47,10 @@ struct MainView: View {
                 
                 HStack(spacing: 0) {
                     Button(action: {
-                        withAnimation {
+                        withAnimation(.spring(dampingFraction: 0.5)) {
                             currentPage = 0
+                        }
+                        withAnimation {
                             svProxy.scrollTo(0)
                         }
                     }) {
@@ -58,23 +62,24 @@ struct MainView: View {
                                 .background(Color.gray)
                                 .overlay {
                                     if currentPage == 0 {
-                                        Path { path in
-                                            path.move(to: CGPoint(x: (geoProxy.size.width / 2) - 20, y: 0))
-                                            path.addLine(to: CGPoint(x: geoProxy.size.width / 2, y: -20))
-                                            path.addLine(to: CGPoint(x: (geoProxy.size.width / 2) + 20, y: 0))
-                                        }
-                                        .fill(Color.green)
+                                        notchViewForTab(geoProxy: geoProxy)
+                                        .fill(Color.gray)
                                         .matchedGeometryEffect(id: "ID", in: namespace)
                                     } else {
                                         EmptyView()
                                     }
                                 }
                         }
+                        
                     }
+                    .buttonStyle(TabButtonStyle())
                     .frame(maxWidth: .infinity)
+                    
                     Button(action: {
-                        withAnimation {
+                        withAnimation(.spring(dampingFraction: 0.5)) {
                             currentPage = 1
+                        }
+                        withAnimation {
                             svProxy.scrollTo(1)
                         }
                     }) {
@@ -86,24 +91,43 @@ struct MainView: View {
                                 .background(Color.gray)
                                 .overlay {
                                     if currentPage == 1 {
-                                        Path { path in
-                                            path.move(to: CGPoint(x: (geoProxy.size.width / 2) - 20, y: 0))
-                                            path.addLine(to: CGPoint(x: geoProxy.size.width / 2, y: -20))
-                                            path.addLine(to: CGPoint(x: (geoProxy.size.width / 2) + 20, y: 0))
-                                        }
-                                        .fill(Color.green)
+                                        notchViewForTab(geoProxy: geoProxy)
+                                        .fill(Color.gray)
                                         .matchedGeometryEffect(id: "ID", in: namespace)
                                     } else {
                                         EmptyView()
                                     }
                                 }
                         }
-
                     }
+                    .buttonStyle(TabButtonStyle())
                     .frame(maxWidth: .infinity)
                 }
                 .frame(height: 50)
             }
+        }
+    }
+    
+    func notchViewForTab(geoProxy: GeometryProxy) -> Path {
+        Path { path in
+            
+            path.move(to: CGPoint(x: (geoProxy.size.width / 2) - (8 / 5 * notchUnitSize), y: 0))
+            
+            path.addQuadCurve(to: CGPoint(x: (geoProxy.size.width / 2) - (1 / 2 * notchUnitSize), y: -(1 / 4 * notchUnitSize)),
+                              control: CGPoint(x: (geoProxy.size.width / 2) - (3 / 4 * notchUnitSize), y: 0))
+            
+            path.addQuadCurve(to: CGPoint(x: (geoProxy.size.width / 2) + (1 / 2 * notchUnitSize), y: -(1 / 4 * notchUnitSize)),
+                              control: CGPoint(x: (geoProxy.size.width / 2), y: -(1 / sqrt(2) * notchUnitSize)))
+            
+            path.addQuadCurve(to: CGPoint(x: (geoProxy.size.width / 2) + (8 / 5 * notchUnitSize), y: 0),
+                              control: CGPoint(x: (geoProxy.size.width / 2) + (3 / 4 * notchUnitSize), y: 0))
+        }
+    }
+    
+    private struct TabButtonStyle: ButtonStyle {
+        
+        func makeBody(configuration: Configuration) -> some View {
+            configuration.label
         }
     }
 }
