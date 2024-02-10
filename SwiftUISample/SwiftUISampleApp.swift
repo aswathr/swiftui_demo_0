@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SwiftUISampleApp: App {
+    @State var searchText: String = ""
+
     var body: some Scene {
         WindowGroup {
-            MainView()
+            NavigationStack {
+                MainView()
+                    .navigationTitle("SwiftUI sample")
+                    .navigationBarTitleDisplayMode(.automatic)
+            }
         }
     }
 }
